@@ -14,6 +14,7 @@ contract CrowdFunding {
         address projectStarter,
         string projectTitle,
         string projectDesc,
+        string projLink, //
         uint256 deadline,
         uint256 goalAmount
     );
@@ -27,6 +28,7 @@ contract CrowdFunding {
     function startProject(
         string calldata title,
         string calldata description,
+        string calldata link,
         uint256 durationInDays,
         uint256 amountToRaise
     ) external {
@@ -36,6 +38,7 @@ contract CrowdFunding {
             title,
             description,
             raiseUntil,
+            link,
             amountToRaise
         );
         projects.push(newProject);
@@ -44,6 +47,7 @@ contract CrowdFunding {
             msg.sender,
             title,
             description,
+            link,
             raiseUntil,
             amountToRaise
         );
@@ -74,6 +78,7 @@ contract Project {
     uint256 public currentBalance;
     uint256 public raiseBy;
     string public title;
+    string public link;
     string public description;
     State public state = State.Fundraising; // initialize on create
     mapping(address => uint256) public contributions;
@@ -104,12 +109,14 @@ contract Project {
         string memory projectTitle,
         string memory projectDesc,
         uint256 fundRaisingDeadline,
+        string memory projLink,
         uint256 goalAmount
     ) public {
         creator = projectStarter;
         title = projectTitle;
         description = projectDesc;
         amountGoal = goalAmount;
+        link = projLink;
         raiseBy = fundRaisingDeadline;
         currentBalance = 0;
     }
@@ -153,7 +160,7 @@ contract Project {
         return false;
     }
 
-    /** @dev Function to retrieve donated amount when a project expires.
+    /*Function to retrieve donated amount when a project expires.
      */
     function getRefund() public inState(State.Expired) returns (bool) 
     {
@@ -172,7 +179,7 @@ contract Project {
         return true;
     }
 
-    /** @dev Function to get specific information about the project.
+    /*Function to get specific information about the project.
      * @return Returns all the project's details
      */
     function getInfo()
@@ -181,6 +188,7 @@ contract Project {
             address payable projectStarter,
             string memory projectTitle,
             string memory projectDesc,
+            string memory projLink,
             uint256 deadline,
             State currentState,
             uint256 currentAmount,
@@ -190,6 +198,7 @@ contract Project {
         projectStarter = creator;
         projectTitle = title;
         projectDesc = description;
+        projLink = link;
         deadline = raiseBy;
         currentState = state;
         currentAmount = currentBalance;
